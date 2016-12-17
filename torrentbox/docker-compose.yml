@@ -1,0 +1,30 @@
+version: '2'
+services:
+  rtorrent:
+    image: kfei/docktorrent
+    ports:
+      - "0.0.0.0:8081:80"
+      - "0.0.0.0:45566:45566/udp"
+      - "0.0.0.0:9527:9527/udp"
+    dns: 8.8.8.8
+    volumes:
+      - /etc/ssl/certs:/etc/ssl/certs
+      - ./data-store:/rtorrent
+    environment:
+      - UPLOAD_RATE=1024
+      - AUTH_OFF=192.168.1.0/24
+    tty: true
+    network_mode: bridge
+    expose:
+      - 45566
+  plex:
+    image: timhaak/plex:latest
+    ports:
+      - "32400:32400"
+    volumes:
+      - ./data-store/finished:/data
+      - ./plex-config:/config
+    environment:
+      - PLEX_USERNAME=plex
+      - PLEX_PASSWORD=plexsecret
+    network_mode: host
